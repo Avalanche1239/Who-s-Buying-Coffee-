@@ -3,12 +3,16 @@ import { readFileSync } from 'node:fs'
 const allowedLicenses = new Set([
   '0BSD',
   'Apache-2.0',
+  'Apache-2.0 AND LGPL-3.0-or-later',
+  'Apache-2.0 AND LGPL-3.0-or-later AND MIT',
   'BSD-2-Clause',
   'BSD-3-Clause',
   'BlueOak-1.0.0',
   'CC0-1.0',
   'ISC',
+  'LGPL-3.0-or-later',
   'MIT',
+  'MIT OR Apache-2.0',
   'MIT-0',
   'MPL-2.0',
 ])
