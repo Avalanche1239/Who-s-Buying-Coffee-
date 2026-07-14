@@ -18,6 +18,52 @@ button, input { font: inherit; }
     #f8efe2;
 }
 
+.home-page { background: #f8efe2; }
+.home-hero { position: relative; }
+.home-editorial {
+  padding: clamp(88px, 12vw, 160px) 24px 36px;
+  border-top: 1px solid rgba(83, 49, 32, .12);
+  background: #fffaf3;
+}
+.editorial-intro,
+.editorial-games,
+.home-faq,
+.home-footer { width: min(960px, 100%); margin-inline: auto; }
+.editorial-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, .48fr);
+  align-items: center;
+  gap: clamp(40px, 8vw, 96px);
+}
+.editorial-kicker { margin: 0 0 18px; color: #a55428; font-size: .7rem; font-weight: 900; letter-spacing: .2em; }
+.editorial-intro h2 {
+  max-width: 650px;
+  margin: 0;
+  font-size: clamp(2.7rem, 7vw, 5.4rem);
+  line-height: .98;
+  letter-spacing: -.06em;
+}
+.editorial-intro p:not(.editorial-kicker) { max-width: 590px; margin: 30px 0 0; color: #715448; font-size: 1.05rem; line-height: 1.85; }
+.editorial-intro img { width: 100%; max-width: 300px; justify-self: end; filter: drop-shadow(0 24px 22px rgba(77, 42, 24, .17)); transform: rotate(3deg); }
+.editorial-games { margin-top: clamp(90px, 12vw, 150px); padding: 0; list-style: none; border-top: 1px solid #d9c7b7; }
+.editorial-games li { display: grid; grid-template-columns: 64px minmax(190px, .75fr) 1fr; align-items: baseline; gap: 20px; padding: 25px 2px; border-bottom: 1px solid #d9c7b7; }
+.editorial-games span { color: #a55428; font-size: .72rem; font-weight: 900; letter-spacing: .14em; }
+.editorial-games strong { font-size: clamp(1.2rem, 3vw, 1.65rem); letter-spacing: -.03em; }
+.editorial-games p { margin: 0; color: #80675a; }
+.home-faq { display: grid; grid-template-columns: minmax(200px, .55fr) 1fr; gap: clamp(40px, 8vw, 100px); margin-top: clamp(100px, 14vw, 170px); padding-bottom: clamp(100px, 14vw, 160px); }
+.home-faq > h2 { grid-column: 1; margin: -8px 0 0; font-size: clamp(2rem, 5vw, 3.4rem); letter-spacing: -.045em; }
+.home-faq > .editorial-kicker { grid-column: 1; align-self: end; }
+.faq-list { grid-column: 2; grid-row: 1 / span 2; border-top: 1px solid #d9c7b7; }
+.faq-list details { border-bottom: 1px solid #d9c7b7; }
+.faq-list summary { position: relative; padding: 24px 44px 24px 0; cursor: pointer; font-weight: 800; list-style: none; }
+.faq-list summary::-webkit-details-marker { display: none; }
+.faq-list summary::after { content: '+'; position: absolute; right: 4px; top: 18px; color: #a55428; font-size: 1.6rem; font-weight: 400; transition: transform .2s ease; }
+.faq-list details[open] summary::after { transform: rotate(45deg); }
+.faq-list details p { margin: -8px 42px 24px 0; color: #80675a; line-height: 1.75; }
+.faq-list summary:focus-visible { outline: 3px solid rgba(182, 95, 47, .22); outline-offset: 4px; }
+.home-footer { display: flex; justify-content: space-between; gap: 24px; padding-top: 28px; border-top: 1px solid #d9c7b7; color: #7a5a49; font-size: .78rem; }
+.home-footer strong { color: #3b251b; }
+
 .intro { max-width: 680px; margin: 0 auto 28px; text-align: center; }
 .steam { color: #b56b38; letter-spacing: 12px; font-weight: 800; }
 .eyebrow, .step { color: #a55428; font-size: .76rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
@@ -163,6 +209,17 @@ input:focus { border-color: #b65f2f; box-shadow: 0 0 0 4px rgba(182, 95, 47, .14
 @keyframes now-pulse { from { box-shadow: 0 10px 22px rgba(182,80,34,.22); } to { box-shadow: 0 14px 30px rgba(182,80,34,.42); transform: translateY(-2px); } }
 
 @media (max-width: 680px) {
+  .home-editorial { padding-inline: 20px; }
+  .editorial-intro { grid-template-columns: 1fr; }
+  .editorial-intro img { width: 170px; margin-top: -8px; justify-self: start; }
+  .editorial-games li { grid-template-columns: 42px 1fr; gap: 14px; }
+  .editorial-games p { grid-column: 2; margin-top: -8px; font-size: .9rem; }
+  .home-faq { grid-template-columns: 1fr; gap: 8px; }
+  .home-faq > .editorial-kicker,
+  .home-faq > h2,
+  .faq-list { grid-column: 1; grid-row: auto; }
+  .faq-list { margin-top: 30px; }
+  .home-footer { flex-direction: column; gap: 7px; }
   .game-grid { grid-template-columns: 1fr; }
   .game-card { min-height: 150px; }
   .preset-grid { grid-template-columns: 1fr; }

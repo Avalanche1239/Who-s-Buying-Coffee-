@@ -20,6 +20,18 @@ describe('App', () => {
     expect(screen.getByRole('button', { name: '게임 시작' })).toBeTruthy()
   })
 
+  it('shows a restrained homepage guide with collapsed FAQs', () => {
+    const { container } = render(<App />)
+
+    expect(screen.getByRole('heading', { name: /커피 내기,\s*조금 더 재미있게\./ })).toBeTruthy()
+    expect(screen.getByText('룰렛')).toBeTruthy()
+    expect(screen.getByText('정확히 멈추기')).toBeTruthy()
+
+    const faq = container.querySelector('details')
+    expect(faq).toBeTruthy()
+    expect(faq?.hasAttribute('open')).toBe(false)
+  })
+
   it('moves to game selection after submitting valid names', async () => {
     const user = userEvent.setup()
     render(<App />)

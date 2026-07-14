@@ -272,30 +272,86 @@ export default function App() {
   }
 
   return (
-    <main className="shell">
-      <section className="intro" aria-labelledby="page-title">
-        <div className="steam" aria-hidden="true">~ ~ ~</div>
-        <p className="eyebrow">A tiny coffee game</p>
-        <h1 id="page-title">Who's Buying Coffee?</h1>
-        <p className="lead">오늘 커피는 누가 살까요?</p>
-      </section>
-      <form className="setup-card" onSubmit={startGames}>
-        <div className="card-heading"><div><span className="step">STEP 01</span><h2>함께할 사람을 알려주세요</h2></div><span className="count">{names.length}/12</span></div>
-        <div className="name-list">
-          {names.map((name, index) => <div className="name-row" key={index}>
-            <span>{index + 1}</span>
-            <label className="sr-only" htmlFor={`name-${index}`}>참가자 {index + 1} 이름</label>
-            <input id={`name-${index}`} aria-label={`참가자 ${index + 1} 이름`} maxLength={20} onChange={(event) => updateName(index, event.target.value)} placeholder="이름 입력" value={name} />
-            {names.length > 2 && <button aria-label={`참가자 ${index + 1} 삭제`} className="remove-button" type="button" onClick={() => setNames((current) => current.filter((_, itemIndex) => itemIndex !== index))}>×</button>}
-          </div>)}
-        </div>
-        <button className="add-button" type="button" disabled={names.length >= 12} onClick={() => setNames((current) => [...current, ''])}>+ 참가자 추가</button>
-        {error && <p className="error" role="alert">{error}</p>}
-        <button className="start-button" type="submit">게임 시작 <span aria-hidden="true">→</span></button>
-        <p className="note">2명부터 12명까지 · 결과는 기기에만 저장됩니다</p>
-      </form>
-    </main>
+    <div className="home-page">
+      <main className="shell home-hero">
+        <section className="intro" aria-labelledby="page-title">
+          <div className="steam" aria-hidden="true">~ ~ ~</div>
+          <p className="eyebrow">A tiny coffee game</p>
+          <h1 id="page-title">Who's Buying Coffee?</h1>
+          <p className="lead">오늘 커피는 누가 살까요?</p>
+        </section>
+        <form className="setup-card" onSubmit={startGames}>
+          <div className="card-heading"><div><span className="step">STEP 01</span><h2>함께할 사람을 알려주세요</h2></div><span className="count">{names.length}/12</span></div>
+          <div className="name-list">
+            {names.map((name, index) => <div className="name-row" key={index}>
+              <span>{index + 1}</span>
+              <label className="sr-only" htmlFor={`name-${index}`}>참가자 {index + 1} 이름</label>
+              <input id={`name-${index}`} aria-label={`참가자 ${index + 1} 이름`} maxLength={20} onChange={(event) => updateName(index, event.target.value)} placeholder="이름 입력" value={name} />
+              {names.length > 2 && <button aria-label={`참가자 ${index + 1} 삭제`} className="remove-button" type="button" onClick={() => setNames((current) => current.filter((_, itemIndex) => itemIndex !== index))}>×</button>}
+            </div>)}
+          </div>
+          <button className="add-button" type="button" disabled={names.length >= 12} onClick={() => setNames((current) => [...current, ''])}>+ 참가자 추가</button>
+          {error && <p className="error" role="alert">{error}</p>}
+          <button className="start-button" type="submit">게임 시작 <span aria-hidden="true">→</span></button>
+          <p className="note">2명부터 12명까지 · 결과는 기기에만 저장됩니다</p>
+        </form>
+      </main>
+      <HomeEditorial />
+    </div>
   )
+}
+
+const homepageGames = [
+  ['01', '룰렛', '빠르고 단순하게'],
+  ['02', '커피 뽑기', '하나씩 고르는 긴장감'],
+  ['03', '아슬아슬 커피', '넘치기 직전의 스릴'],
+  ['04', '사다리타기', '익숙하지만 끝까지 두근두근'],
+  ['05', '정확히 멈추기', '감각으로 맞히는 7초'],
+]
+
+function HomeEditorial() {
+  return <section className="home-editorial" aria-labelledby="home-guide-title">
+    <div className="editorial-intro">
+      <div>
+        <p className="editorial-kicker">FIVE WAYS TO PICK</p>
+        <h2 id="home-guide-title">커피 내기,<br />조금 더 재미있게.</h2>
+        <p>누가 커피를 살지 정해야 하는 순간, 다섯 가지 가벼운 게임으로 결정해 보세요. 회사 점심시간부터 친구 모임까지, 회원가입 없이 바로 시작할 수 있어요.</p>
+      </div>
+      <img src={takeawayCup} alt="" aria-hidden="true" />
+    </div>
+
+    <ol className="editorial-games" aria-label="커피 내기 게임 종류">
+      {homepageGames.map(([number, title, description]) => <li key={number}>
+        <span>{number}</span>
+        <strong>{title}</strong>
+        <p>{description}</p>
+      </li>)}
+    </ol>
+
+    <div className="home-faq">
+      <p className="editorial-kicker">GOOD TO KNOW</p>
+      <h2>시작하기 전에</h2>
+      <div className="faq-list">
+        <details>
+          <summary>무료로 이용할 수 있나요?</summary>
+          <p>네. 회원가입이나 설치 없이 무료로 이용할 수 있어요.</p>
+        </details>
+        <details>
+          <summary>같은 이름을 입력해도 되나요?</summary>
+          <p>네. 같은 이름도 그대로 참여할 수 있어요.</p>
+        </details>
+        <details>
+          <summary>휴대폰에서도 사용할 수 있나요?</summary>
+          <p>네. 휴대폰과 태블릿, PC의 최신 브라우저에서 사용할 수 있어요.</p>
+        </details>
+      </div>
+    </div>
+
+    <footer className="home-footer">
+      <strong>Who's Buying Coffee?</strong>
+      <span>오늘의 커피를 정하는 가장 가벼운 방법.</span>
+    </footer>
+  </section>
 }
 
 function GameCard({ id, title, description, onSelect }: { id: GameId; title: string; description: string; onSelect: (id: GameId) => void }) {
