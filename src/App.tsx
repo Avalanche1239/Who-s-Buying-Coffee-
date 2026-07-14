@@ -328,25 +328,6 @@ function HomeEditorial() {
       </li>)}
     </ol>
 
-    <div className="home-faq">
-      <p className="editorial-kicker">GOOD TO KNOW</p>
-      <h2>시작하기 전에</h2>
-      <div className="faq-list">
-        <details>
-          <summary>무료로 이용할 수 있나요?</summary>
-          <p>네. 회원가입이나 설치 없이 무료로 이용할 수 있어요.</p>
-        </details>
-        <details>
-          <summary>같은 이름을 입력해도 되나요?</summary>
-          <p>네. 같은 이름도 그대로 참여할 수 있어요.</p>
-        </details>
-        <details>
-          <summary>휴대폰에서도 사용할 수 있나요?</summary>
-          <p>네. 휴대폰과 태블릿, PC의 최신 브라우저에서 사용할 수 있어요.</p>
-        </details>
-      </div>
-    </div>
-
     <footer className="home-footer">
       <strong>Who's Buying Coffee?</strong>
       <span>오늘의 커피를 정하는 가장 가벼운 방법.</span>
