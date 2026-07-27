@@ -1,11 +1,12 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import App from './App'
 import { routeLengthForViewport } from './features/games/NewGameScreens'
 
 afterEach(() => {
   cleanup()
+  window.history.replaceState(null, '', '/')
 })
 
 describe('App', () => {
@@ -45,6 +46,23 @@ describe('App', () => {
     expect(screen.queryByRole('button', { name: '가위바위보 토너먼트' })).toBeNull()
   })
 
+  it.each([
+    ['/roulette', '룰렛', '룰렛 돌리기'],
+    ['/ladder/', '사다리타기', '사다리 만들기'],
+  ])('opens the routed game after participant setup at %s', async (pathname, gameName, controlName) => {
+    window.history.replaceState(null, '', pathname)
+    const user = userEvent.setup()
+    render(<App />)
+
+    const inputs = screen.getAllByRole('textbox')
+    await user.type(inputs[0], 'Mina')
+    await user.type(inputs[1], 'Joon')
+    await user.click(screen.getByRole('button', { name: '게임 시작' }))
+
+    expect(screen.getByRole('heading', { name: gameName })).toBeTruthy()
+    expect(screen.getByRole('button', { name: controlName })).toBeTruthy()
+  })
+
   it('shows an error instead of silently ignoring invalid names', async () => {
     const user = userEvent.setup()
     render(<App />)
@@ -53,12 +71,12 @@ describe('App', () => {
   })
 
   it.each([
-    ['룰렛', '룰렛 돌리기'],
-    ['커피 뽑기', '쫄깃하게'],
-    ['아슬아슬 커피', '다음 사람에게 넘기기'],
-    ['사다리타기', '사다리 만들기'],
-    ['정확히 멈추기', '도전 시작'],
-  ])('opens %s and exposes a working game control', async (gameName, controlName) => {
+    ['룰렛', '룰렛 돌리기', '/roulette'],
+    ['커피 뽑기', '쫄깃하게', '/'],
+    ['아슬아슬 커피', '다음 사람에게 넘기기', '/'],
+    ['사다리타기', '사다리 만들기', '/ladder'],
+    ['정확히 멈추기', '도전 시작', '/'],
+  ])('opens %s, exposes a working game control, and updates its URL', async (gameName, controlName, pathname) => {
     const user = userEvent.setup()
     render(<App />)
     const inputs = screen.getAllByRole('textbox')
@@ -68,6 +86,27 @@ describe('App', () => {
     await user.click(screen.getByRole('button', { name: gameName }))
     expect(screen.getByRole('heading', { name: gameName })).toBeTruthy()
     expect(screen.getByRole('button', { name: controlName })).toBeTruthy()
+    expect(window.location.pathname).toBe(pathname)
+  })
+
+  it('keeps the selected game in sync with browser back and forward navigation', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    const inputs = screen.getAllByRole('textbox')
+    await user.type(inputs[0], 'Mina')
+    await user.type(inputs[1], 'Joon')
+    await user.click(screen.getByRole('button', { name: '게임 시작' }))
+    await user.click(screen.getByRole('button', { name: '룰렛' }))
+
+    expect(window.location.pathname).toBe('/roulette')
+    window.history.back()
+    await waitFor(() => expect(window.location.pathname).toBe('/'))
+    expect(screen.getByRole('heading', { name: '게임을 선택하세요' })).toBeTruthy()
+
+    window.history.forward()
+    await waitFor(() => expect(window.location.pathname).toBe('/roulette'))
+    expect(screen.getByRole('heading', { name: '룰렛' })).toBeTruthy()
   })
 
   it('finishes roulette and can return to game selection', async () => {

@@ -16,7 +16,7 @@ describe('search engine metadata', () => {
   })
 
   it('allows search crawling and advertises the sitemap', () => {
-    const robots = read('public/robots.txt')
+    const robots = read('public/robots.txt').replaceAll('\r\n', '\n')
 
     expect(robots).toBe(
       'User-agent: *\nAllow: /\n\nSitemap: https://whoscoffee.site/sitemap.xml\n',

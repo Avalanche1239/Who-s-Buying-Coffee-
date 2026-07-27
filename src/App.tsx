@@ -15,6 +15,7 @@ import {
 } from './features/games/gameRules'
 import type { Participant } from './types/participant'
 import { LadderGame, StopGame } from './features/games/NewGameScreens'
+import { gameForPathname, pathnameForGame } from './lib/gameRoutes'
 
 type Screen = 'setup' | 'games' | GameId | 'result'
 
@@ -48,10 +49,11 @@ const gameArt: Record<GameId, string> = {
 }
 
 export default function App() {
+  const initialRoutedGame = gameForPathname(window.location.pathname)
   const [names, setNames] = useState(['', ''])
   const [participants, setParticipants] = useState<Participant[]>([])
   const [screen, setScreen] = useState<Screen>('setup')
-  const [activeGame, setActiveGame] = useState<GameId>('roulette')
+  const [activeGame, setActiveGame] = useState<GameId>(initialRoutedGame ?? 'roulette')
   const [receipt, setReceipt] = useState<ReceiptState>()
   const [overflow, setOverflow] = useState<OverflowState>()
   const [gameResult, setGameResult] = useState<GameResult>()
@@ -65,6 +67,26 @@ export default function App() {
   useEffect(() => () => {
     if (resultTimer.current !== undefined) window.clearTimeout(resultTimer.current)
   }, [])
+
+  useEffect(() => {
+    function handlePopState() {
+      const routedGame = gameForPathname(window.location.pathname)
+      cancelPendingResult()
+      setGameResult(undefined)
+      setRouletteRotation(0)
+
+      if (routedGame) {
+        setActiveGame(routedGame)
+        setScreen(participants.length > 0 ? routedGame : 'setup')
+        return
+      }
+
+      setScreen(participants.length > 0 ? 'games' : 'setup')
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [participants])
 
   function cancelPendingResult() {
     if (resultTimer.current !== undefined) {
@@ -85,6 +107,7 @@ export default function App() {
 
   function leaveGame() {
     cancelPendingResult()
+    pushPathname('/')
     setScreen('games')
   }
 
@@ -102,7 +125,13 @@ export default function App() {
     }
     setParticipants(validated.participants)
     setError('')
-    setScreen('games')
+    const routedGame = gameForPathname(window.location.pathname)
+    if (routedGame) {
+      setActiveGame(routedGame)
+      setScreen(routedGame)
+    } else {
+      setScreen('games')
+    }
   }
 
   function openGame(gameId: GameId) {
@@ -114,7 +143,18 @@ export default function App() {
     setOverflowReveal(undefined)
     if (gameId === 'receipt') setReceipt(undefined)
     if (gameId === 'overflow') setOverflow(createOverflowState(participants))
+    pushPathname(pathnameForGame(gameId))
     setScreen(gameId)
+  }
+
+  function showGameSelection() {
+    pushPathname('/')
+    setScreen('games')
+  }
+
+  function showSetup() {
+    pushPathname('/')
+    setScreen('setup')
   }
 
   function finish(result: GameResult) {
@@ -143,8 +183,8 @@ export default function App() {
           </div>}
           <div className="action-row">
             <button className="start-button compact" type="button" onClick={() => openGame(activeGame)}>같은 게임 다시 하기</button>
-            <button className="secondary-button" type="button" onClick={() => setScreen('games')}>다른 게임 선택</button>
-            <button className="back-button" type="button" onClick={() => setScreen('setup')}>처음으로</button>
+            <button className="secondary-button" type="button" onClick={showGameSelection}>다른 게임 선택</button>
+            <button className="back-button" type="button" onClick={showSetup}>처음으로</button>
           </div>
         </section>
       </main>
@@ -266,7 +306,7 @@ export default function App() {
           <GameCard id="ladder" title="사다리타기" description="익숙하지만 끝까지 두근두근" onSelect={openGame} />
           <GameCard id="stop" title="정확히 멈추기" description={`마음속으로 정확히 ${STOP_TARGET_SECONDS}초를 세어보세요`} onSelect={openGame} />
         </section>
-        <button className="back-button" type="button" onClick={() => setScreen('setup')}>← 참가자 수정</button>
+        <button className="back-button" type="button" onClick={showSetup}>← 참가자 수정</button>
       </main>
     )
   }
@@ -299,6 +339,10 @@ export default function App() {
       <HomeEditorial />
     </div>
   )
+}
+
+function pushPathname(pathname: string) {
+  if (window.location.pathname !== pathname) window.history.pushState(null, '', pathname)
 }
 
 const homepageGames = [
