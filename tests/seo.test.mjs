@@ -1,9 +1,17 @@
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
-import { describe, expect, it } from 'vitest'
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join, resolve } from 'node:path'
+import { afterEach, describe, expect, it } from 'vitest'
+import { build } from 'vite'
 
 const root = resolve(import.meta.dirname, '..')
 const read = (path) => readFileSync(resolve(root, path), 'utf8')
+const sitemapUrls = [
+  'https://whoscoffee.site/',
+  'https://whoscoffee.site/roulette',
+  'https://whoscoffee.site/ladder',
+]
+const outputDirectories = []
 
 const pages = [
   {
@@ -59,6 +67,18 @@ function jsonLd(html) {
   return match ? JSON.parse(match[1]) : null
 }
 
+function parseXml(xml) {
+  const document = new DOMParser().parseFromString(xml, 'application/xml')
+  expect(document.querySelector('parsererror')).toBeNull()
+  return document
+}
+
+afterEach(() => {
+  for (const directory of outputDirectories.splice(0)) {
+    rmSync(directory, { force: true, recursive: true })
+  }
+})
+
 describe('search engine metadata', () => {
   it.each(pages)('provides unique static metadata and visible content in $path', (page) => {
     const html = read(page.path)
@@ -112,19 +132,47 @@ describe('search engine metadata', () => {
     expect(structuredData.url).not.toContain('www.')
   })
 
-  it('allows search crawling and advertises the sitemap', () => {
+  it('allows all crawlers and advertises the canonical sitemap without blocking public pages', () => {
     const robots = read('public/robots.txt').replaceAll('\r\n', '\n')
 
     expect(robots).toBe(
       'User-agent: *\nAllow: /\n\nSitemap: https://whoscoffee.site/sitemap.xml\n',
     )
+    expect(robots).not.toMatch(/User-agent:\s*Googlebot[\s\S]*Disallow:/i)
+    expect(robots).not.toMatch(/Disallow:\s*\/(?:roulette|ladder)(?:\/|\s|$)/i)
   })
 
-  it('lists the canonical homepage in the sitemap', () => {
+  it('lists exactly the three canonical crawlable URLs in valid XML', () => {
     const sitemap = read('public/sitemap.xml')
+    const document = parseXml(sitemap)
+    const locations = [...document.querySelectorAll('url > loc')].map(
+      (element) => element.textContent?.trim(),
+    )
 
-    expect(sitemap).toContain('<loc>https://whoscoffee.site/</loc>')
-    expect(sitemap).not.toContain('<priority>')
-    expect(sitemap).not.toContain('<changefreq>')
+    expect(locations).toEqual(sitemapUrls)
+    expect(new Set(locations).size).toBe(3)
+    expect(locations.every((url) => url?.startsWith('https://whoscoffee.site'))).toBe(true)
+    expect(locations.some((url) => url?.includes('www.'))).toBe(false)
+    expect(locations.some((url) => url?.startsWith('http://'))).toBe(false)
+    expect(document.querySelector('priority')).toBeNull()
+    expect(document.querySelector('changefreq')).toBeNull()
+    expect(document.querySelector('lastmod')).toBeNull()
+  })
+
+  it('copies robots and sitemap unchanged into the production build', async () => {
+    const outDir = mkdtempSync(join(tmpdir(), 'whos-coffee-seo-'))
+    outputDirectories.push(outDir)
+
+    await build({
+      configFile: resolve(root, 'vite.config.ts'),
+      build: { outDir },
+      logLevel: 'silent',
+    })
+
+    for (const filename of ['robots.txt', 'sitemap.xml']) {
+      const outputPath = resolve(outDir, filename)
+      expect(existsSync(outputPath)).toBe(true)
+      expect(readFileSync(outputPath, 'utf8')).toBe(read(`public/${filename}`))
+    }
   })
 })
