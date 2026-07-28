@@ -34,6 +34,21 @@ const gameNames: Record<GameId, string> = {
   stop: '정확히 멈추기',
 }
 
+const setupPageContent = {
+  home: {
+    heading: '커피 내기 랜덤 게임',
+    description: '이름을 입력하고 원하는 게임을 선택해 커피 내기, 점심 내기, 벌칙자와 당첨자를 간편하게 정해 보세요.',
+  },
+  roulette: {
+    heading: '랜덤 룰렛 돌리기',
+    description: '참가자 이름을 입력한 뒤 룰렛을 돌려 커피 내기, 점심 내기, 벌칙자 또는 당첨자를 무작위로 선택할 수 있습니다.',
+  },
+  ladder: {
+    heading: '온라인 사다리타기',
+    description: '참가자 이름을 입력하고 사다리를 실행해 커피 내기, 점심 내기와 벌칙 결과를 무작위로 정할 수 있습니다.',
+  },
+} as const
+
 const takeawayCup = '/assets/takeaway-cup-web.png'
 const takeawayWinner = '/assets/takeaway-win-web.png'
 const takeawayOverflow = '/assets/takeaway-overflow-web.png'
@@ -50,6 +65,7 @@ const gameArt: Record<GameId, string> = {
 
 export default function App() {
   const initialRoutedGame = gameForPathname(window.location.pathname)
+  const setupContent = setupPageContent[initialRoutedGame ?? 'home']
   const [names, setNames] = useState(['', ''])
   const [participants, setParticipants] = useState<Participant[]>([])
   const [screen, setScreen] = useState<Screen>('setup')
@@ -317,8 +333,8 @@ export default function App() {
         <section className="intro" aria-labelledby="page-title">
           <div className="steam" aria-hidden="true">~ ~ ~</div>
           <p className="eyebrow">A tiny coffee game</p>
-          <h1 id="page-title">Who's Buying Coffee?</h1>
-          <p className="lead">오늘 커피는 누가 살까요?</p>
+          <h1 id="page-title">{setupContent.heading}</h1>
+          <p className="lead">{setupContent.description}</p>
         </section>
         <form className="setup-card" onSubmit={startGames}>
           <div className="card-heading"><div><span className="step">STEP 01</span><h2>함께할 사람을 알려주세요</h2></div><span className="count">{names.length}/12</span></div>

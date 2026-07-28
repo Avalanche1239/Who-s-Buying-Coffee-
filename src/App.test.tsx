@@ -16,9 +16,25 @@ describe('App', () => {
 
   it('shows the coffee game setup screen', () => {
     render(<App />)
-    expect(screen.getByRole('heading', { name: "Who's Buying Coffee?" })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: '커피 내기 랜덤 게임' })).toBeTruthy()
     expect(screen.getAllByRole('textbox')).toHaveLength(2)
     expect(screen.getByRole('button', { name: '게임 시작' })).toBeTruthy()
+  })
+
+  it.each([
+    ['/', '커피 내기 랜덤 게임', '이름을 입력하고 원하는 게임을 선택해 커피 내기, 점심 내기, 벌칙자와 당첨자를 간편하게 정해 보세요.'],
+    ['/roulette', '랜덤 룰렛 돌리기', '참가자 이름을 입력한 뒤 룰렛을 돌려 커피 내기, 점심 내기, 벌칙자 또는 당첨자를 무작위로 선택할 수 있습니다.'],
+    ['/ladder/', '온라인 사다리타기', '참가자 이름을 입력하고 사다리를 실행해 커피 내기, 점심 내기와 벌칙 결과를 무작위로 정할 수 있습니다.'],
+  ])('replaces static content with one matching H1 at %s', (pathname, heading, description) => {
+    window.history.replaceState(null, '', pathname)
+    const container = document.createElement('div')
+    container.innerHTML = `<h1>${heading}</h1><p>${description}</p>`
+
+    render(<App />, { container })
+
+    expect(container.querySelectorAll('h1')).toHaveLength(1)
+    expect(container.querySelector('h1')?.textContent).toBe(heading)
+    expect(container.textContent).toContain(description)
   })
 
   it('shows a restrained homepage game guide without a pre-start FAQ', () => {
