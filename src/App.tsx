@@ -261,10 +261,10 @@ export default function App() {
                 scheduleFinish(next.result!, 1600)
               }
             }}
-          ><img alt="" src={receiptReveal && cupId === receipt.bombCupId ? takeawayWinner : takeawayCup} /><span aria-hidden="true">{receiptReveal && cupId === receipt.bombCupId ? '당첨!' : selected ? '통과' : '?'}</span></button>
+          ><img alt="" height={512} src={receiptReveal && cupId === receipt.bombCupId ? takeawayWinner : takeawayCup} width={512} /><span aria-hidden="true">{receiptReveal && cupId === receipt.bombCupId ? '당첨!' : selected ? '통과' : '?'}</span></button>
         })}
       </div>
-      {receiptReveal && <div className="event-overlay" role="status"><img alt="" className="win-event-art" src={takeawayWinner} /><strong>당첨!</strong></div>}
+      {receiptReveal && <div className="event-overlay" role="status"><img alt="" className="win-event-art" height={512} src={takeawayWinner} width={512} /><strong>당첨!</strong></div>}
     </GameLayout>
   }
 
@@ -274,11 +274,11 @@ export default function App() {
     return <GameLayout title="아슬아슬 커피" description={<><strong className="turn-name">{participantLabel(currentPlayer, participants)}</strong>님 차례예요. 넘치기 전에 다음 사람에게 넘기세요.</>} onBack={leaveGame}>
       <div className="overflow-scene">
         <div className="fill-visual" aria-label={`커피 게이지 ${level}%`} role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={level}>
-          {overflowReveal ? <img alt="" className="takeaway-stage spilling" src={takeawayOverflow} /> : <div className="cutaway-cup">
+          {overflowReveal ? <img alt="" className="takeaway-stage spilling" height={512} src={takeawayOverflow} width={512} /> : <div className="cutaway-cup">
             <div className="coffee-cavity" aria-hidden="true">
               <span className={level === 0 ? 'coffee-fill empty' : 'coffee-fill'} style={{ height: `${level}%` }} />
             </div>
-            <img alt="" className="cutaway-frame" src={takeawayCutaway} />
+            <img alt="" className="cutaway-frame" height={512} src={takeawayCutaway} width={512} />
           </div>}
         </div>
         <strong className="fill-percentage">{level}%</strong>
@@ -349,7 +349,7 @@ export default function App() {
           <button className="add-button" type="button" disabled={names.length >= 12} onClick={() => setNames((current) => [...current, ''])}>+ 참가자 추가</button>
           {error && <p className="error" role="alert">{error}</p>}
           <button className="start-button" type="submit">게임 시작 <span aria-hidden="true">→</span></button>
-          <p className="note">2명부터 12명까지 · 결과는 기기에만 저장됩니다</p>
+          <p className="note">2명부터 12명까지 참여할 수 있어요.</p>
         </form>
       </main>
       <HomeEditorial />
@@ -377,7 +377,7 @@ function HomeEditorial() {
         <h2 id="home-guide-title">커피 내기,<br />조금 더 재미있게.</h2>
         <p>누가 커피를 살지 정해야 하는 순간, 다섯 가지 가벼운 게임으로 결정해 보세요. 회사 점심시간부터 친구 모임까지, 회원가입 없이 바로 시작할 수 있어요.</p>
       </div>
-      <img src={takeawayCup} alt="" aria-hidden="true" />
+      <img src={takeawayCup} alt="" aria-hidden="true" height={512} width={512} />
     </div>
 
     <ol className="editorial-games" aria-label="커피 내기 게임 종류">
@@ -388,6 +388,28 @@ function HomeEditorial() {
       </li>)}
     </ol>
 
+    <section className="service-guide" aria-labelledby="service-guide-title">
+      <h2 id="service-guide-title">사용 방법</h2>
+      <div className="guide-columns">
+        <div className="guide-block">
+          <h3>세 단계로 시작하세요</h3>
+          <ol>
+            <li>참가자 이름을 입력합니다.</li>
+            <li>원하는 게임을 선택합니다.</li>
+            <li>게임을 실행하고 결과를 확인합니다.</li>
+          </ol>
+        </div>
+        <div className="guide-block">
+          <h3>랜덤 선택 방식</h3>
+          <p>랜덤 선택이 필요한 게임은 브라우저의 보안 난수 기능을 사용해 결과를 결정합니다.</p>
+        </div>
+        <div className="guide-block">
+          <h3>입력 데이터</h3>
+          <p>입력한 이름은 서버로 전송하거나 영구 저장하지 않으며, 새로고침하면 사라집니다.</p>
+        </div>
+      </div>
+    </section>
+
     <footer className="home-footer">
       <strong>Who's Buying Coffee?</strong>
       <span>오늘의 커피를 정하는 가장 가벼운 방법.</span>
@@ -397,7 +419,7 @@ function HomeEditorial() {
 
 function GameCard({ id, title, description, onSelect }: { id: GameId; title: string; description: string; onSelect: (id: GameId) => void }) {
   return <button aria-label={title} className="game-card" type="button" onClick={() => onSelect(id)}>
-    <img alt="" className={`game-art ${id}`} src={gameArt[id]} />
+    <img alt="" className={`game-art ${id}`} height={512} src={gameArt[id]} width={512} />
     <strong>{title}</strong><small>{description}</small>
   </button>
 }

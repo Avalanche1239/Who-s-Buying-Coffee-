@@ -1,8 +1,10 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import App from './App'
+import appSource from './App.tsx?raw'
 import { routeLengthForViewport } from './features/games/NewGameScreens'
+import newGameScreensSource from './features/games/NewGameScreens.tsx?raw'
 
 afterEach(() => {
   cleanup()
@@ -44,6 +46,49 @@ describe('App', () => {
     expect(screen.getByText('룰렛')).toBeTruthy()
     expect(screen.getByText('정확히 멈추기')).toBeTruthy()
     expect(screen.queryByRole('heading', { name: '시작하기 전에' })).toBeNull()
+  })
+
+  it.each(['/', '/roulette', '/ladder'])('shows concise usage, random selection, and input data guidance at %s', (pathname) => {
+    window.history.replaceState(null, '', pathname)
+    const { container } = render(<App />)
+
+    expect(screen.getByRole('heading', { name: '사용 방법' })).toBeTruthy()
+    expect(screen.getByText('참가자 이름을 입력합니다.')).toBeTruthy()
+    expect(screen.getByText('원하는 게임을 선택합니다.')).toBeTruthy()
+    expect(screen.getByText('게임을 실행하고 결과를 확인합니다.')).toBeTruthy()
+    expect(screen.getByText('랜덤 선택이 필요한 게임은 브라우저의 보안 난수 기능을 사용해 결과를 결정합니다.')).toBeTruthy()
+    expect(screen.getByText('입력한 이름은 서버로 전송하거나 영구 저장하지 않으며, 새로고침하면 사라집니다.')).toBeTruthy()
+    expect(screen.queryByText(/기기에만 저장됩니다/)).toBeNull()
+    expect(container.querySelectorAll('h1')).toHaveLength(1)
+  })
+
+  it('does not send or persist participant names during setup', async () => {
+    const user = userEvent.setup()
+    const fetchSpy = vi.spyOn(globalThis, 'fetch')
+    const storageSpy = vi.spyOn(Storage.prototype, 'setItem')
+    const firstRender = render(<App />)
+
+    const inputs = screen.getAllByRole('textbox')
+    await user.type(inputs[0], 'Mina')
+    await user.type(inputs[1], 'Joon')
+    await user.click(screen.getByRole('button', { name: '게임 시작' }))
+
+    expect(fetchSpy).not.toHaveBeenCalled()
+    expect(storageSpy).not.toHaveBeenCalled()
+
+    firstRender.unmount()
+    render(<App />)
+    expect(screen.getAllByRole<HTMLInputElement>('textbox').map((input) => input.value)).toEqual(['', ''])
+  })
+
+  it('declares the real square intrinsic dimensions on every app image element', () => {
+    const imageTags = `${appSource}\n${newGameScreensSource}`.match(/<img\b[\s\S]*?\/>/g) ?? []
+
+    expect(imageTags.length).toBeGreaterThan(0)
+    for (const imageTag of imageTags) {
+      expect(imageTag).toMatch(/\bwidth=\{512\}/)
+      expect(imageTag).toMatch(/\bheight=\{512\}/)
+    }
   })
 
   it('moves to game selection after submitting valid names', async () => {

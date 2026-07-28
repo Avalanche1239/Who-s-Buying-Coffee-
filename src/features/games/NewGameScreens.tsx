@@ -173,7 +173,7 @@ export function StopGame({ participants, onFinish, labelFor }: GameProps) {
 
   return <>
     <div className={`time-sense-stage ${running ? 'running' : ''}`} aria-label={`${STOP_TARGET_SECONDS}초 감각 게임`}>
-      <img alt="" src="/assets/game-stop-web.png" />
+      <img alt="" height={512} src="/assets/game-stop-web.png" width={512} />
       <div className="time-sense-face" aria-hidden="true">
         {running ? <><i /><strong>감으로 세어 보세요</strong><small>숫자는 보이지 않아요</small></> : <><strong>{STOP_TARGET_SECONDS.toFixed(2)}</strong><small>목표 시간</small></>}
       </div>
