@@ -17,10 +17,10 @@ const pages = [
   {
     path: 'index.html',
     url: 'https://whoscoffee.site/',
-    title: "커피 내기 랜덤 게임 모음 | Who's Buying Coffee?",
-    description: '룰렛, 커피 뽑기, 사다리타기 등으로 점심·커피 내기와 벌칙자를 빠르고 공정하게 정하는 무료 랜덤 게임입니다.',
-    heading: '커피 내기 랜덤 게임',
-    intro: '이름을 입력하고 원하는 게임을 선택해 커피 내기, 점심 내기, 벌칙자와 당첨자를 간편하게 정해 보세요.',
+    title: "커피 내기 게임 모음 - 룰렛·사다리타기 | Who's Buying Coffee?",
+    description: '룰렛, 커피 뽑기, 사다리타기 등 다양한 랜덤 게임으로 커피 내기, 점심 내기와 벌칙자를 간편하게 정해 보세요.',
+    heading: '커피 내기 게임 모음',
+    intro: '이름을 입력하고 룰렛, 커피 뽑기, 사다리타기 등 원하는 게임을 선택해 커피 내기와 벌칙자를 간편하게 정해 보세요.',
   },
   {
     path: 'roulette/index.html',
@@ -80,6 +80,17 @@ afterEach(() => {
 })
 
 describe('search engine metadata', () => {
+  it('targets the exact coffee game phrase on the homepage without the old wording', () => {
+    const html = read('index.html')
+    const title = elementTexts(html, 'title')[0]
+    const heading = elementTexts(html, 'h1')[0]
+
+    expect(title).toContain('커피 내기 게임')
+    expect(heading).toContain('커피 내기 게임')
+    expect(title).not.toContain('커피 내기 랜덤 게임')
+    expect(heading).not.toContain('커피 내기 랜덤 게임')
+  })
+
   it.each(pages)('provides unique static metadata and visible content in $path', (page) => {
     const html = read(page.path)
     const title = elementTexts(html, 'title')[0]

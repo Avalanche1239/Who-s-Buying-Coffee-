@@ -9,10 +9,10 @@ const outputDirectories = []
 const builtPages = [
   {
     path: 'index.html',
-    title: "커피 내기 랜덤 게임 모음 | Who's Buying Coffee?",
-    description: '룰렛, 커피 뽑기, 사다리타기 등으로 점심·커피 내기와 벌칙자를 빠르고 공정하게 정하는 무료 랜덤 게임입니다.',
+    title: "커피 내기 게임 모음 - 룰렛·사다리타기 | Who's Buying Coffee?",
+    description: '룰렛, 커피 뽑기, 사다리타기 등 다양한 랜덤 게임으로 커피 내기, 점심 내기와 벌칙자를 간편하게 정해 보세요.',
     canonical: 'https://whoscoffee.site/',
-    heading: '커피 내기 랜덤 게임',
+    heading: '커피 내기 게임 모음',
   },
   {
     path: 'roulette/index.html',

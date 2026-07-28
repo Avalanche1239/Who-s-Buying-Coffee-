@@ -36,8 +36,8 @@ const gameNames: Record<GameId, string> = {
 
 const setupPageContent = {
   home: {
-    heading: '커피 내기 랜덤 게임',
-    description: '이름을 입력하고 원하는 게임을 선택해 커피 내기, 점심 내기, 벌칙자와 당첨자를 간편하게 정해 보세요.',
+    heading: '커피 내기 게임 모음',
+    description: '이름을 입력하고 룰렛, 커피 뽑기, 사다리타기 등 원하는 게임을 선택해 커피 내기와 벌칙자를 간편하게 정해 보세요.',
   },
   roulette: {
     heading: '랜덤 룰렛 돌리기',
